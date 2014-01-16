@@ -56,7 +56,7 @@ for my $url (@urls) {
     
     $request = http_request(
         GET => $url,
-        timeout => 10, # seconds
+        timeout => 120, # seconds
         recurse => 5, # redirects
         headers => { "user-agent" => $user_agent },
         sub {

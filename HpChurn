@@ -26,9 +26,6 @@ http://www.bbc.co.uk/);
 	for my $u (@urls) {
 		my $res = $churn->find({url => $u});
 		$results{$u} = $res->count;
-		# while (my $doc = $res->next) {
-		# 	$results{$u} = {}
-		# }
 	}
 	
 
@@ -40,9 +37,6 @@ get '/url' => sub {
 	my $url = $self->param("url");
 	my $res = $churn->find({url => $url});
 	
-	# while (my $doc = $res->next) {
-	# 	$results{$u} = {}
-	# }	
 
 	$self->render(template => 'url' );
 };
