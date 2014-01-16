@@ -1,0 +1,75 @@
+#!/usr/bin/env perl
+use Mojolicious::Lite;
+use MongoDB;
+
+my $client   = MongoDB::Connection->new(host => 'localhost', port => 27017);
+my $db       = $client->get_database( 'homepage_churn' );
+my $churn    = $db->get_collection( 'churn' );
+# Documentation browser under "/perldoc"
+plugin 'PODRenderer';
+
+get '/' => sub {
+	my $self = shift;
+	my @urls = qw(http://www.telegraph.co.uk/
+http://www.theguardian.com/uk
+http://www.mirror.co.uk/
+http://www.dailymail.co.uk/home/index.html
+http://www.independent.co.uk/
+http://www.thesun.co.uk/sol/homepage/
+http://www.thetimes.co.uk/tto/news/
+http://www.ft.com/home/uk
+http://www.nytimes.com/
+http://www.bbc.co.uk/);
+
+	my %results;
+
+	for my $u (@urls) {
+		my $res = $churn->find({url => $u});
+		$results{$u} = $res->count;
+		# while (my $doc = $res->next) {
+		# 	$results{$u} = {}
+		# }
+	}
+	
+
+	$self->render(template => 'index', urls => \@urls, results => \%results );
+};
+
+get '/url' => sub {
+	my $self = shift;
+	my $url = $self->param("url");
+	my $res = $churn->find({url => $url});
+	
+	# while (my $doc = $res->next) {
+	# 	$results{$u} = {}
+	# }	
+
+	$self->render(template => 'url' );
+};
+
+app->start;
+__DATA__
+
+@@ index.html.ep
+% layout 'default';
+% title 'Welcome';
+<table>
+<tr><th>URL</th><th>Results</th></tr>
+% for my $u (@$urls) {
+<tr><td><%= $u %></td><td><%= $results->{$u} %></td></tr>
+% }
+</table>
+
+
+@@ url.html.ep
+% layout 'default';
+% title 'Welcome';
+etc
+
+
+@@ layouts/default.html.ep
+<!DOCTYPE html>
+<html>
+  <head><title><%= title %></title></head>
+  <body><%= content %></body>
+</html>
