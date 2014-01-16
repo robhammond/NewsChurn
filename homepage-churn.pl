@@ -45,7 +45,7 @@ http://www.ft.com/home/uk
 http://www.nytimes.com/
 http://www.bbc.co.uk/);
 
-
+my @screens;
 
 for my $url (@urls) {
     $cv->begin;
@@ -107,6 +107,7 @@ for my $url (@urls) {
                 close HTML;
 
                 # _fetch_screengrab($url, $id);
+                push @screens, {url => $url, id => $id};
 
             } else {
 	            $log->error(
@@ -126,6 +127,11 @@ for my $url (@urls) {
 }
 
 $cv->wait;
+
+# fetch screengrabs after loop as causes timeout errors otherwise
+for my $s (@screens) {
+    _fetch_screengrab($s->{'url'}, $s->{'id'});
+}
 
 sub _insert_data {
     my $data = shift;
