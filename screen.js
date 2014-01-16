@@ -15,7 +15,10 @@ var id		= casper.cli.get("id");
 
 // start user agent
 casper.start(url, function() {
-    this.captureSelector("screengrabs/" + id + ".png", "html");
+    this.capture('screengrabs/' + id + '.jpg', undefined, {
+        format: 'jpg',
+        quality: 70
+    });
 });
 
 casper.run();
