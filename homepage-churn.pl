@@ -11,6 +11,7 @@ use Mojo::Util qw(decode encode html_unescape xml_escape);
 use Mojo::DOM;
 use Mojo::URL;
 use Data::Dumper;
+use Getopt::Long;
 
 my $log = Mojo::Log->new;
 
@@ -19,6 +20,10 @@ my $user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537
 my $client   = MongoDB::Connection->new(host => 'localhost', port => 27017);
 my $db       = $client->get_database( 'homepage_churn' );
 my $churn    = $db->get_collection( 'churn' );
+
+my $path = '~/';
+
+GetOptions( 'path=s' => \$path );
 
 # {
 # 	url => url,
@@ -102,7 +107,7 @@ for my $url (@urls) {
                 	text => $clean_content,	
             	});
 
-                open(HTML,">:utf8", "cache/$id.html" ) or die $!;
+                open(HTML,">:utf8", $path . "cache/$id.html" ) or die $!;
                 print HTML $body;
                 close HTML;
 
@@ -143,6 +148,6 @@ sub _insert_data {
 sub _fetch_screengrab {
 	my ($url, $id) = @_;
 	$log->info("grabbing $url");
-	system("casperjs screen.js --url=$url --id=$id");
+	system("casperjs screen.js --url=$url --id=$id --path='$path'");
 	return 1;
 }

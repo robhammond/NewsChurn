@@ -10,12 +10,13 @@ var casper = require("casper").create({
 casper.userAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:25.0) Gecko/20100101 Firefox/25.0');
 
 // get contact url & db id number via CLI input
+var path	= casper.cli.get("path");
 var url		= casper.cli.get("url");
 var id		= casper.cli.get("id");
 
 // start user agent
 casper.start(url, function() {
-    this.capture('screengrabs/' + id + '.jpg', undefined, {
+    this.capture(path + 'screengrabs/' + id + '.jpg', undefined, {
         format: 'jpg',
         quality: 70
     });
